@@ -1,0 +1,84 @@
+version: '3.5'
+
+services:
+
+  elasticsearch:
+    build:
+      context: elasticsearch/
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+
+  logstash:
+    build:
+      context: logstash/
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5000:5000"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    build:
+      context: kibana/
+    volumes:
+      - ./kibana/config/:/usr/share/kibana/config:ro
+    ports:
+      - "5600:5600"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  kibana1:
+    build:
+      context: kibana1/
+    volumes:
+      - ./kibana1/config/:/usr/share/kibana/config:ro
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  kibana2:
+    build:
+      context: kibana2/
+    volumes:
+      - ./kibana2/config/:/usr/share/kibana/config:ro
+    ports:
+      - "5602:5602"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  kibana3:
+    build:
+      context: kibana3/
+    volumes:
+      - ./kibana3/config/:/usr/share/kibana/config:ro
+    ports:
+      - "5603:5603"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch      
+
+networks:
+
+  elk:
+    driver: bridge
